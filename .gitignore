@@ -1,0 +1,7 @@
+.vagrant/
+bin/
+obj/
+.gradle/
+build/
+shared/
+examples/java-*/.*
