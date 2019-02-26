@@ -10,3 +10,12 @@ $actualHash = (Get-FileHash $localPath -Algorithm SHA256).Hash
 if ($actualHash -ne $expectedHash) {
     throw "downloaded file from $url to $localPath has $actualHash hash that does not match the expected $expectedHash"
 }
+
+# add default desktop shortcuts (called from a provision-base.ps1 generated script).
+[IO.File]::WriteAllText(
+    "$env:USERPROFILE\ConfigureDesktop-Wireshark.ps1",
+@'
+Install-ChocolateyShortcut `
+    -ShortcutFilePath "$env:USERPROFILE\Desktop\Wireshark.lnk" `
+    -TargetPath 'C:\Program Files\Wireshark\Wireshark.exe'
+'@)
