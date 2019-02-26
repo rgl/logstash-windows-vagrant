@@ -1,5 +1,7 @@
-
 // see http://logging.apache.org/log4j/1.2/manual.html
+
+package net.example;
+
 import java.util.UUID;
 import org.apache.log4j.Logger;
 import org.apache.log4j.MDC;
@@ -8,7 +10,7 @@ public class Example {
     final static Logger log = Logger.getLogger(Example.class);
 
     public static void main(String[] args) throws Exception {
-        String application = "java-log4j-syslog/1.0";
+        String application = "java-log4j-gelf/1.0";
 
         MDC.put("application", application);
 
