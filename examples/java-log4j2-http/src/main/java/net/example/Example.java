@@ -13,10 +13,6 @@ public class Example {
     final static Logger log = LogManager.getLogger(Example.class);
 
     public static void main(String[] args) throws Exception {
-        String application = "java-log4j2-http/1.0";
-
-        ThreadContext.put("application", application);
-
         log.info("Begin");
 
         String traceId = UUID.randomUUID().toString().replace("-", "");
