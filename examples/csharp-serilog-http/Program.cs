@@ -14,7 +14,7 @@ namespace SerilogHttp
                 .MinimumLevel.Debug()
                 .Enrich.WithProperty("Application", application)
                 .Enrich.FromLogContext()
-                .WriteTo.Http("http://localhost:8080")
+                .WriteTo.Http("http://localhost:8080/serilog")
                 .CreateLogger();
 
             var log = Log.ForContext<Program>();
