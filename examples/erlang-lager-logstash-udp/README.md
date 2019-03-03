@@ -18,7 +18,7 @@ Configure the erlang compiler to automatically apply the lager transformations b
   {parse_transform, lager_transform},
   ...
 ]}.
-``
+```
 
 Configure the lager to log to the console and logstash by modifying `config/sys.config` with:
 
