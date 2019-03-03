@@ -145,3 +145,6 @@ choco install -y notepad2
 
 # nssm is used to run console applications as windows services.
 choco install -y nssm
+
+# 7zip is used to manipulate compressed files.
+choco install -y 7zip

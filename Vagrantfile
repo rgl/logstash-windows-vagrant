@@ -37,6 +37,8 @@ Vagrant.configure('2') do |config|
     config.vm.provision :shell, path: 'ps.ps1', args: 'provision-gradle.ps1'
     config.vm.provision :shell, path: 'ps.ps1', args: 'examples/java-log4j-gelf/run.ps1'
     config.vm.provision :shell, path: 'ps.ps1', args: 'examples/java-log4j-syslog/run.ps1'
+    config.vm.provision :shell, path: 'ps.ps1', args: 'provision-erlang.ps1'
+    config.vm.provision :shell, path: 'ps.ps1', args: 'examples/erlang-lager-logstash-udp/run.ps1'
     config.vm.provision :shell, path: 'ps.ps1', args: 'provision-rabbitmq.ps1'
     config.vm.provision :shell, path: 'ps.ps1', args: 'examples/rabbitmq-syslog/run.ps1'
   end
