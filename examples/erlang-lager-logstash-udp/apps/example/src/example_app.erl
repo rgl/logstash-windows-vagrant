@@ -19,6 +19,8 @@ start(_StartType, _StartArgs) ->
     %    to a module or {erl_opts, [{parse_transform, lager_transform}]}. to rebar.config.
     %    otherwise you have to use the generic lager api, e.g., lager:log(info, self(), "start"),
     lager:info("Begin"),
+    % send a message from the erlang error_logger to test if lager is handling that logger.
+    error_logger:info_msg("A test message from the ~p module sent from the erlang error_logger", [?MODULE]),
     TransactionId = uuid:to_string(simple, uuid:uuid4()),
     try
         A = 10,
