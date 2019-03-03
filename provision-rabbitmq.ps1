@@ -1,13 +1,9 @@
 $serviceName = 'rabbitmq'
 
-choco install -y rabbitmq --version 3.7.7
-
-Write-Host "Stopping the $serviceName service..."
-Stop-Service $serviceName
-
 # see https://www.rabbitmq.com/configure.html#config-location
 # see https://www.rabbitmq.com/logging.html#logging-to-syslog
 Write-Host "Configuring the $serviceName service..."
+mkdir -Force $env:APPDATA\RabbitMQ | Out-Null
 Set-Content `
     -Encoding ascii `
     -Path "$env:APPDATA\RabbitMQ\rabbitmq.conf" `
@@ -19,9 +15,15 @@ log.syslog.port = 514
 log.syslog.transport = udp
 log.syslog.protocol = rfc3164
 '@
+Set-Content `
+    -Encoding ascii `
+    -Path "$env:APPDATA\RabbitMQ\enabled_plugins" `
+    -Value @'
+[rabbitmq_management].
+'@
 
-Write-Output "Starting the $serviceName service..."
-Start-Service $serviceName
+Write-Host "Installing $serviceName..."
+choco install -y rabbitmq --version 3.7.12
 
 # install a tool to test amqp connections.
 $archiveUrl = 'https://github.com/rgl/test-amqp/releases/download/v0.0.1/test-amqp.zip'
@@ -46,3 +48,16 @@ while ($true) {
     }
     Start-Sleep -Seconds 1
 }
+
+# add default desktop shortcuts (called from a provision-base.ps1 generated script).
+# NB use the default guest:guest credentials.
+[IO.File]::WriteAllText(
+    "$env:USERPROFILE\ConfigureDesktop-RabbitMQ.ps1",
+    @'
+[IO.File]::WriteAllText(
+    "$env:USERPROFILE\Desktop\RabbitMQ.url",
+    @"
+[InternetShortcut]
+URL=http://localhost:15672
+"@)
+'@)
