@@ -1,4 +1,4 @@
-choco install -y server-jre8
+choco install -y adoptopenjdk8jre
 Import-Module "$env:ChocolateyInstall\helpers\chocolateyInstaller.psm1"
 Update-SessionEnvironment
 
