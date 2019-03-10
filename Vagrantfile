@@ -33,6 +33,7 @@ Vagrant.configure('2') do |config|
     config.vm.provision :shell, path: 'ps.ps1', args: 'provision-kibana-oss.ps1'
     config.vm.provision :shell, path: 'ps.ps1', args: 'provision-logstash-oss.ps1'
     config.vm.provision :shell, path: 'ps.ps1', args: 'provision-dotnetcore-sdk.ps1'
+    config.vm.provision :shell, path: 'ps.ps1', args: 'examples/powershell-logstash-udp/run.ps1'
     config.vm.provision :shell, path: 'ps.ps1', args: 'examples/csharp-serilog-http/run.ps1'
     config.vm.provision :shell, path: 'ps.ps1', args: 'provision-gradle.ps1'
     config.vm.provision :shell, path: 'ps.ps1', args: 'examples/java-log4j-gelf/run.ps1'
