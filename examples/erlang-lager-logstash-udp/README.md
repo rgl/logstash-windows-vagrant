@@ -1,3 +1,5 @@
+# Erlang example application
+
 Create an example application:
 
 ```bash

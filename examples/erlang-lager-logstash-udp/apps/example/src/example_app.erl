@@ -34,6 +34,9 @@ start(_StartType, _StartArgs) ->
                 "Something went wrong with the division~nStacktrace:~s",
                 [lager:pr_stacktrace(erlang:get_stacktrace(), {Exception, Reason})])
     end,
+    % since this is an example application that is suppossed to terminate after using
+    % the logger, we do just that after 5000 milliseconds.
+    timer:apply_after(5000, init, stop, []),
     example_sup:start_link().
 
 %%--------------------------------------------------------------------

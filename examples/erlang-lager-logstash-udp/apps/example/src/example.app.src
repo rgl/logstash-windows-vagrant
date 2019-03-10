@@ -6,7 +6,10 @@
   {applications, [
     kernel,
     stdlib,
-    lager
+    lager,
+    lager_logstash,
+    jsx,
+    uuid
   ]},
   {env, []},
   {modules, []},

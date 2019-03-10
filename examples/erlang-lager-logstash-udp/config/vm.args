@@ -1,3 +1,5 @@
+-noshell
+
 -sname example
 
 -setcookie example_cookie
