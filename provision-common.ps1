@@ -148,3 +148,25 @@ choco install -y nssm
 
 # 7zip is used to manipulate compressed files.
 choco install -y 7zip
+
+# git is used to download dependencies.
+choco install -y git --params '/GitOnlyOnPath /NoAutoCrlf'
+choco install -y gitextensions
+choco install -y meld
+
+# update $env:PATH with the recently installed Chocolatey packages.
+Import-Module C:\ProgramData\chocolatey\helpers\chocolateyInstaller.psm1
+Update-SessionEnvironment
+
+# configure git.
+# see http://stackoverflow.com/a/12492094/477532
+git config --global user.name 'Rui Lopes'
+git config --global user.email 'rgl@ruilopes.com'
+git config --global push.default simple
+git config --global diff.guitool meld
+git config --global difftool.meld.path 'C:/Program Files (x86)/Meld/Meld.exe'
+git config --global difftool.meld.cmd '\"C:/Program Files (x86)/Meld/Meld.exe\" \"$LOCAL\" \"$REMOTE\"'
+git config --global merge.tool meld
+git config --global mergetool.meld.path 'C:/Program Files (x86)/Meld/Meld.exe'
+git config --global mergetool.meld.cmd '\"C:/Program Files (x86)/Meld/Meld.exe\" --diff \"$LOCAL\" \"$BASE\" \"$REMOTE\" --output \"$MERGED\"'
+#git config --list --show-origin
