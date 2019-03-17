@@ -28,11 +28,11 @@ start(_StartType, _StartArgs) ->
         lager:debug([{transactionId, TransactionId}], "Dividing ~p by ~p", [A, B]),
         io:format("~p~n", [A / B])
     catch
-        Exception:Reason ->
+        Class:Reason:Stacktrace ->
             lager:error(
                 [{transactionId, TransactionId}],
                 "Something went wrong with the division~nStacktrace:~s",
-                [lager:pr_stacktrace(erlang:get_stacktrace(), {Exception, Reason})])
+                [lager:pr_stacktrace(Stacktrace, {Class, Reason})])
     end,
     % since this is an example application that is suppossed to terminate after using
     % the logger, we do just that after 5000 milliseconds.
