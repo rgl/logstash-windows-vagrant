@@ -1,8 +1,8 @@
 $serviceHome = 'C:\logstash'
 $serviceName = 'logstash'
 $serviceUsername = "NT SERVICE\$serviceName"
-$archiveUrl = 'https://artifacts.elastic.co/downloads/logstash/logstash-oss-6.6.1.zip'
-$archiveHash = 'b68d246ce74df9b5315aaee86df6428312ce1a8e71b39a59bef0313ab3ada448500164ac9c46aaf3e8002388ba0e2d422d38056913a8633d7ec0421f5164545e'
+$archiveUrl = 'https://artifacts.elastic.co/downloads/logstash/logstash-oss-6.6.2.zip'
+$archiveHash = 'b4709b85e1a047880df92e3a23cd9596df641f8c00fc258a5ea0c72e086eb4d8b9197cdb68bbfcc66d80adc2ef0e600fc1496360107366269f594b5092f17e2a'
 $archiveName = Split-Path $archiveUrl -Leaf
 $archivePath = "$env:TEMP\$archiveName"
 
