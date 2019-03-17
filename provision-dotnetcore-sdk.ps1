@@ -6,8 +6,8 @@
 $env:DOTNET_CLI_TELEMETRY_OPTOUT = '1'
 
 # install the dotnet sdk.
-$archiveUrl = 'https://download.visualstudio.microsoft.com/download/pr/ad308a66-16e5-4d72-aa0a-0174c4d3621e/617718b26b29f4e4df0096800c72b9b3/dotnet-sdk-2.1.505-win-x86.exe'
-$archiveHash = '7d09100fe3c862429e76635dc84db3885dcc593943a936376501757829ef6b0454968f332f13fde543897e02c20abe3d691f879bfe5ad8268f4be73783c3403b'
+$archiveUrl = 'https://download.visualstudio.microsoft.com/download/pr/4690d405-11c6-488e-b1ba-4f2e9b247b25/7c70d9003e02997b66d843ec54ba53d1/dotnet-sdk-2.1.505-win-x64.exe'
+$archiveHash = 'bb93a14aff94fcffe55cce9393690a58f8e7707d56b4c309ce809d61f09a54f67b1a16690d6a71a902ec45ab1d2696ee2f0df88dff00fdd7605ca577e7c3983b'
 $archiveName = Split-Path -Leaf $archiveUrl
 $archivePath = "$env:TEMP\$archiveName"
 Write-Host "Downloading $archiveName..."
