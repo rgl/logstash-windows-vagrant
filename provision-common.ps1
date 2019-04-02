@@ -170,3 +170,7 @@ git config --global merge.tool meld
 git config --global mergetool.meld.path 'C:/Program Files (x86)/Meld/Meld.exe'
 git config --global mergetool.meld.cmd '\"C:/Program Files (x86)/Meld/Meld.exe\" --diff \"$LOCAL\" \"$BASE\" \"$REMOTE\" --output \"$MERGED\"'
 #git config --list --show-origin
+
+# set default applications.
+choco install -y SetDefaultBrowser
+SetDefaultBrowser HKLM "Google Chrome"
