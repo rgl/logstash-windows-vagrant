@@ -1,8 +1,10 @@
+Import-Module Carbon
+
 $serviceHome = 'C:\logstash'
 $serviceName = 'logstash'
 $serviceUsername = "NT SERVICE\$serviceName"
-$archiveUrl = 'https://artifacts.elastic.co/downloads/logstash/logstash-oss-6.6.2.zip'
-$archiveHash = 'b4709b85e1a047880df92e3a23cd9596df641f8c00fc258a5ea0c72e086eb4d8b9197cdb68bbfcc66d80adc2ef0e600fc1496360107366269f594b5092f17e2a'
+$archiveUrl = 'https://artifacts.elastic.co/downloads/logstash/logstash-oss-6.7.0.zip'
+$archiveHash = '6b182c8bebd988f7bf57648807632d20872ffb2b05d076b5fd4d49d2f5ee09634a9835a5ec397b2cdd7cfdb725fe05a19ccf330902132274ea3c2a8c3b54cb96'
 $archiveName = Split-Path $archiveUrl -Leaf
 $archivePath = "$env:TEMP\$archiveName"
 

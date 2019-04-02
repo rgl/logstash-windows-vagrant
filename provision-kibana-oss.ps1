@@ -1,3 +1,5 @@
+Import-Module Carbon
+
 choco install -y adoptopenjdk8jre nssm
 Import-Module "$env:ChocolateyInstall\helpers\chocolateyInstaller.psm1"
 Update-SessionEnvironment
@@ -5,8 +7,8 @@ Update-SessionEnvironment
 $serviceHome = 'C:\kibana'
 $serviceName = 'kibana'
 $serviceUsername = "NT SERVICE\$serviceName"
-$archiveUrl = 'https://artifacts.elastic.co/downloads/kibana/kibana-oss-6.6.2-windows-x86_64.zip'
-$archiveHash = '3c3f652394b5bb2d6f206c0aa439d91b2dc07d872e5b602d6942f36c7d43f9d1fcf54fc7dce29b29669fb5ce88fc1d64bce85ccc611f0634d163b2ecc073281e'
+$archiveUrl = 'https://artifacts.elastic.co/downloads/kibana/kibana-oss-6.7.0-windows-x86_64.zip'
+$archiveHash = '5060150a81b8f7308bdba5ac0115652f2bd567157b365c59f627c19dbd84aa5c579e04b53d681ba0d4470a0a6ab007a55af007fe014321ec275f01b2db7f87d9'
 $archiveName = Split-Path $archiveUrl -Leaf
 $archivePath = "$env:TEMP\$archiveName"
 
