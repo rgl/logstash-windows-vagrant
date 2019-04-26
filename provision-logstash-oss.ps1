@@ -1,4 +1,5 @@
 Import-Module Carbon
+Import-Module "$env:ChocolateyInstall\helpers\chocolateyInstaller.psm1"
 
 $serviceHome = 'C:\logstash'
 $serviceName = 'logstash'
@@ -16,8 +17,7 @@ if ($archiveHash -ne $archiveActualHash) {
 }
 
 Write-Host 'Installing logstash...'
-mkdir $serviceHome | Out-Null
-Expand-Archive $archivePath -DestinationPath $serviceHome
+Get-ChocolateyUnzip -FileFullPath $archivePath -Destination $serviceHome
 $archiveTempPath = Resolve-Path $serviceHome\logstash-*
 Move-Item $archiveTempPath\* $serviceHome
 Remove-Item $archiveTempPath
