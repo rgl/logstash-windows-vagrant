@@ -1,0 +1,21 @@
+# see https://www.elastic.co/guide/en/beats/winlogbeat/current/configuration-winlogbeat-options.html
+# see the available log names with:
+#       Get-WinEvent -ListLog * | Sort-Object LogName | Format-Table LogName
+# see the providers that write to a specific log with:
+#       (Get-WinEvent -ListLog Application).ProviderNames | Sort-Object
+#       (Get-WinEvent -ListLog Security).ProviderNames | Sort-Object
+# see the available provider names with:
+#       Get-WinEvent -ListProvider * | Sort-Object Name | Format-Table Name
+winlogbeat.event_logs:
+  - name: Application
+    ignore_older: 48h
+  - name: Security
+    #level: critical, error, warning
+    ignore_older: 48h
+  - name: System
+    #level: critical, error, warning
+    ignore_older: 48h
+
+output.logstash:
+  hosts: ["127.0.0.1:5044"]
+  compression_level: 0 # 0 to be able to easily see data in wireshark.
