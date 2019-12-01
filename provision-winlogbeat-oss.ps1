@@ -75,3 +75,32 @@ if ($result -ne '[SC] ChangeServiceConfig2 SUCCESS') {
 
 Write-Output "Starting the $serviceName service..."
 Start-Service $serviceName
+
+# enable the _size property to account the size of each document _source property length.
+# see https://www.elastic.co/guide/en/elasticsearch/plugins/current/mapper-size.html
+function Enable-ElasticsearchTemplateSizeMapping($templateName) {
+    $templateUrl = "http://localhost:9200/_template/$templateName"
+    # wait for the template to appear (the application might still be creating it in the background).
+    while ($true) {
+        try {
+            $template = (Invoke-RestMethod -Uri $templateUrl).$templateName
+            break
+        }
+        catch {
+            Start-Sleep -Seconds 3
+        }
+    }
+    $template.mappings | Add-Member -NotePropertyName _size -NotePropertyValue @{enabled=$true}
+    $templateJson = $template | ConvertTo-Json -Depth 100
+    $result = Invoke-RestMethod `
+        -Method Put `
+        -Uri $templateUrl `
+        -ContentType 'application/json' `
+        -Body $templateJson
+    if (!$result.acknowledged) {
+        throw "failed to set the elasticsearch template size mapping: $($result | ConvertTo-Json -Compress)"
+    }
+}
+$templateName = "winlogbeat-$($archiveName -replace '.+-(\d+(\.\d+)+).+','$1')"
+Write-Output "Enabling the _size field in the $templateName template..."
+Enable-ElasticsearchTemplateSizeMapping $templateName

@@ -81,6 +81,7 @@ Grant-Permission $elasticsearchHome\config\elasticsearch.keystore $elasticsearch
 
 # install plugins.
 Install-ElasticsearchPlugin 'ingest-attachment'
+Install-ElasticsearchPlugin 'mapper-size'
 
 Write-Host "Starting the $elasticsearchServiceName service..."
 Start-Service $elasticsearchServiceName
