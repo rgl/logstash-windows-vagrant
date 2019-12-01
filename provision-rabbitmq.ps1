@@ -23,7 +23,7 @@ Set-Content `
 '@
 
 Write-Host "Installing $serviceName..."
-choco install -y rabbitmq --version 3.7.13
+choco install -y rabbitmq --version 3.8.0
 
 # install a tool to test amqp connections.
 $archiveUrl = 'https://github.com/rgl/test-amqp/releases/download/v0.0.1/test-amqp.zip'
@@ -48,6 +48,9 @@ while ($true) {
     }
     Start-Sleep -Seconds 1
 }
+
+# show basic information.
+&"$env:TEMP\test-amqp.exe" -url 'amqp://localhost:5672'
 
 # add default desktop shortcuts (called from a provision-base.ps1 generated script).
 # NB use the default guest:guest credentials.
