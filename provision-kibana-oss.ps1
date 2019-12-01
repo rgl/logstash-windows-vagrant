@@ -4,8 +4,9 @@ Import-Module "$env:ChocolateyInstall\helpers\chocolateyInstaller.psm1"
 $serviceHome = 'C:\kibana'
 $serviceName = 'kibana'
 $serviceUsername = "NT SERVICE\$serviceName"
-$archiveUrl = 'https://artifacts.elastic.co/downloads/kibana/kibana-oss-7.1.0-windows-x86_64.zip'
-$archiveHash = '844f879433f12635245f0070e74424ba49e070cebf2bd89ef17d74b2ee84f67c93004e0403f12ccbb756476007ddd8d2d40ac12ec2bc453c969dfa2b31f8f57d'
+# see https://www.elastic.co/downloads/kibana-oss
+$archiveUrl = 'https://artifacts.elastic.co/downloads/kibana/kibana-oss-7.4.2-windows-x86_64.zip'
+$archiveHash = 'e64a61923dec48ff2a9069fc9c03f1c1149df94d09866196bf0d6d98c29bc2e4c02f3e26db8a1e87963b66d7f9c04d8d47fdebb354514f9d002cb032dacc496f'
 $archiveName = Split-Path $archiveUrl -Leaf
 $archivePath = "$env:TEMP\$archiveName"
 

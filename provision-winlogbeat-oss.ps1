@@ -4,8 +4,9 @@ Import-Module "$env:ChocolateyInstall\helpers\chocolateyInstaller.psm1"
 $serviceHome = 'C:\winlogbeat'
 $serviceName = 'winlogbeat'
 $serviceUsername = "SYSTEM"
-$archiveUrl = 'https://artifacts.elastic.co/downloads/beats/winlogbeat/winlogbeat-oss-7.1.0-windows-x86_64.zip'
-$archiveHash = '5124e90cac1f03af764b6720970ffaf9b8557646742c3b58c6916c3d3997de9c244b08023fd59a43a3030ba04cab58420e0b7007016a404a5a67ff4e2ba2aeb0'
+# see https://www.elastic.co/downloads/beats/winlogbeat-oss
+$archiveUrl = 'https://artifacts.elastic.co/downloads/beats/winlogbeat/winlogbeat-oss-7.4.2-windows-x86_64.zip'
+$archiveHash = '4e10fa1dc572df0070dfb9dfcc955248fb55ae111043f204f65c9891ac9a2f54aed05757b46a1b3e4bc7263172afa0c7a85cd54a74bfc7b7e5febea8c1df938a'
 $archiveName = Split-Path $archiveUrl -Leaf
 $archivePath = "$env:TEMP\$archiveName"
 
@@ -53,7 +54,7 @@ if ($result -ne 'Config OK') {
 Write-Output "Creating the winlogbeat Elasticsearch template..."
 &"$serviceHome\winlogbeat.exe" `
     setup `
-    --template `
+    --index-management `
     -c "$serviceHome\config\winlogbeat.yml" `
     -E output.logstash.enabled=false `
     -E 'output.elasticsearch.hosts=["localhost:9200"]'

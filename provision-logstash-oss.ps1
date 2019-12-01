@@ -4,8 +4,9 @@ Import-Module "$env:ChocolateyInstall\helpers\chocolateyInstaller.psm1"
 $serviceHome = 'C:\logstash'
 $serviceName = 'logstash'
 $serviceUsername = "NT SERVICE\$serviceName"
-$archiveUrl = 'https://artifacts.elastic.co/downloads/logstash/logstash-oss-7.1.0.zip'
-$archiveHash = '56838ba91c59c865de46ea4dcf1ce3bc15d55b6d63a9c52315c9434e55c3b147098a940fd0381f3b15e9a031662f6a3ab6613ca31b8e93cf8f0d0b885d31dd31'
+# see https://www.elastic.co/downloads/logstash-oss
+$archiveUrl = 'https://artifacts.elastic.co/downloads/logstash/logstash-oss-7.4.2.zip'
+$archiveHash = '71abe986dd88846aa715a8c0bcd1729f6cab8fbcdd5b43dab762a334b2ec6c11049131a7a96e571d3be88ef1aa3586874386d0d8319496ba5354b425ac96c415'
 $archiveName = Split-Path $archiveUrl -Leaf
 $archivePath = "$env:TEMP\$archiveName"
 
