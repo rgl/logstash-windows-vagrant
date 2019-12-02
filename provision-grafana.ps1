@@ -112,6 +112,17 @@ New-GrafanaDataSource @{
     }
 } | ConvertTo-Json
 
+# create a dashboard for Logstash.
+Write-Host 'Creating the Logstash dashboard...'
+$dashboard = (Get-Content -Raw C:\vagrant\grafana-logstash-dashboard.json) `
+    -replace '\${DS_LOGSTASH}','Logstash' `
+    | ConvertFrom-Json
+$dashboard.PSObject.Properties.Remove('__inputs')
+$dashboard.PSObject.Properties.Remove('__requires')
+New-GrafanaDashboard @{
+    dashboard = $dashboard
+}
+
 # add default desktop shortcuts (called from a provision-base.ps1 generated script).
 [IO.File]::WriteAllText(
     "$env:USERPROFILE\ConfigureDesktop-Grafana.ps1",
