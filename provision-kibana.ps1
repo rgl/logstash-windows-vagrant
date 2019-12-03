@@ -11,12 +11,12 @@ $serviceName = 'kibana'
 $serviceUsername = "NT SERVICE\$serviceName"
 if ($elasticFlavor -eq 'oss') {
     # see https://www.elastic.co/downloads/kibana-oss
-    $archiveUrl = 'https://artifacts.elastic.co/downloads/kibana/kibana-oss-7.4.2-windows-x86_64.zip'
-    $archiveHash = 'e64a61923dec48ff2a9069fc9c03f1c1149df94d09866196bf0d6d98c29bc2e4c02f3e26db8a1e87963b66d7f9c04d8d47fdebb354514f9d002cb032dacc496f'
+    $archiveUrl = 'https://artifacts.elastic.co/downloads/kibana/kibana-oss-7.5.0-windows-x86_64.zip'
+    $archiveHash = '02986b5a2ada813f8fbbdb2f45e13e512957b667e753db70bdd52887a8f173a7d0953b44f6b0472a4da67d86ecec649663a81e33b53c4ffad0a6db3bec3b261d'
 } else {
     # see https://www.elastic.co/downloads/kibana
-    $archiveUrl = 'https://artifacts.elastic.co/downloads/kibana/kibana-7.4.2-windows-x86_64.zip'
-    $archiveHash = 'a5ca936643d9c7586e266c90d9e5975b61f34799b4eb74f9ce458d341a14079ea7575c9834de12f79a9fc9958e51c3dff341c28dea98fe3fc17c54dfe8b01de4'
+    $archiveUrl = 'https://artifacts.elastic.co/downloads/kibana/kibana-7.5.0-windows-x86_64.zip'
+    $archiveHash = '77b901c6b3a3e29a5c3f5c8da5d995393f737c2f84e197778f4b86c995d22564327ae2e0ca142f9b874b90d6a519fe273af04e01626ae42549c8105bdef5eea2'
 }
 $archiveName = Split-Path $archiveUrl -Leaf
 $archivePath = "$env:TEMP\$archiveName"

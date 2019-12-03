@@ -14,12 +14,12 @@ $elasticsearchServiceName = 'elasticsearch'
 $elasticsearchServiceUsername = "NT SERVICE\$elasticsearchServiceName"
 if ($elasticFlavor -eq 'oss') {
     # see https://www.elastic.co/downloads/elasticsearch-oss-no-jdk
-    $archiveUrl = 'https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-7.4.2-no-jdk-windows-x86_64.zip'
-    $archiveHash = 'ae10f3677a2de16b7408831ca0dbaa19bd068193f38e506b14d8b20c974f6a3fb85784198fb9b926e6583a21cc9647951ef6602fc4926b266ae51e4e4b4bc4fd'
+    $archiveUrl = 'https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-7.5.0-no-jdk-windows-x86_64.zip'
+    $archiveHash = '86b6da0a417bf07415926f9d83fd991704bba6d8c6c63717fc3c458f9c36982673a6ceb35f29a702ac5632f0a904164f59b39d70ac02a2d8c89c9e05ce823757'
 } else {
     # see https://www.elastic.co/downloads/elasticsearch-no-jdk
-    $archiveUrl = 'https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.4.2-windows-x86_64.zip'
-    $archiveHash = '1a5b98f4e2045f6353d1d18360a017d8f04565d23b4dde56b6c647c22b061dd7df7b323b4bd295303d841998c9d0d0f289ef1469db65ef28bc86348acf83e5ce'
+    $archiveUrl = 'https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.5.0-no-jdk-windows-x86_64.zip'
+    $archiveHash = 'a7301fbb4f47515dad5da60eff87c60d01e9275137db8e242b49033c9623aaa5e3c25e53d2a8904c50d79d040d152b623b0337d0ad31a0bf507e5283dafad57b'
 }
 $archiveName = Split-Path $archiveUrl -Leaf
 $archivePath = "$env:TEMP\$archiveName"

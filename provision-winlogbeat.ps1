@@ -11,12 +11,12 @@ $serviceName = 'winlogbeat'
 $serviceUsername = "SYSTEM"
 if ($elasticFlavor -eq 'oss') {
     # see https://www.elastic.co/downloads/beats/winlogbeat-oss
-    $archiveUrl = 'https://artifacts.elastic.co/downloads/beats/winlogbeat/winlogbeat-oss-7.4.2-windows-x86_64.zip'
-    $archiveHash = '4e10fa1dc572df0070dfb9dfcc955248fb55ae111043f204f65c9891ac9a2f54aed05757b46a1b3e4bc7263172afa0c7a85cd54a74bfc7b7e5febea8c1df938a'
+    $archiveUrl = 'https://artifacts.elastic.co/downloads/beats/winlogbeat/winlogbeat-oss-7.5.0-windows-x86_64.zip'
+    $archiveHash = '15446b94d957d99c412238d3426eeacde7e5ad1c783d2e80d1c82cb82b1791082e9d36943fd5a9f7911b46643a346de3c97b8e33b97faffeb5599d4f8946b334'
 } else {
     # see https://www.elastic.co/downloads/beats/winlogbeat
-    $archiveUrl = 'https://artifacts.elastic.co/downloads/beats/winlogbeat/winlogbeat-7.4.2-windows-x86_64.zip'
-    $archiveHash = '74ed363308589b5393b185d1684c5ea340dd975bb6886db72250f16cfd5347d52221f5b73865cdf076a64b008b76e4a613407f89f01e826e1e7c75717b7ce892'
+    $archiveUrl = 'https://artifacts.elastic.co/downloads/beats/winlogbeat/winlogbeat-7.5.0-windows-x86_64.zip'
+    $archiveHash = '0547ea265968626306c2fe12d854a65d00b646ea84c849fc598c61d3c9dee43231e5ea6ee59d29ce60b2d4528e1cc2c3ac1772c9a5c6bb228661a64959fdbbd0'
 }
 $archiveName = Split-Path $archiveUrl -Leaf
 $archivePath = "$env:TEMP\$archiveName"
