@@ -1,6 +1,8 @@
 param(
     [Parameter(Mandatory=$true)]
-    [String]$script
+    [String]$script,
+    [Parameter(ValueFromRemainingArguments=$true)]
+    [String[]]$scriptArguments
 )
 
 Set-StrictMode -Version Latest
@@ -81,4 +83,4 @@ cd c:/vagrant
 $script = Resolve-Path $script
 cd (Split-Path $script -Parent)
 Write-Host "Running $script..."
-. $script
+. $script @scriptArguments

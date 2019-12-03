@@ -1,34 +1,44 @@
+param(
+    [ValidateSet('oss', 'basic')]
+    [string]$elasticFlavor = 'oss'
+)
+
 Import-Module Carbon
 Import-Module "$env:ChocolateyInstall\helpers\chocolateyInstaller.psm1"
 
-$serviceHome = 'C:\logstash'
-$serviceName = 'logstash'
+$serviceHome = 'C:\kibana'
+$serviceName = 'kibana'
 $serviceUsername = "NT SERVICE\$serviceName"
-# see https://www.elastic.co/downloads/logstash-oss
-$archiveUrl = 'https://artifacts.elastic.co/downloads/logstash/logstash-oss-7.4.2.zip'
-$archiveHash = '71abe986dd88846aa715a8c0bcd1729f6cab8fbcdd5b43dab762a334b2ec6c11049131a7a96e571d3be88ef1aa3586874386d0d8319496ba5354b425ac96c415'
+if ($elasticFlavor -eq 'oss') {
+    # see https://www.elastic.co/downloads/kibana-oss
+    $archiveUrl = 'https://artifacts.elastic.co/downloads/kibana/kibana-oss-7.4.2-windows-x86_64.zip'
+    $archiveHash = 'e64a61923dec48ff2a9069fc9c03f1c1149df94d09866196bf0d6d98c29bc2e4c02f3e26db8a1e87963b66d7f9c04d8d47fdebb354514f9d002cb032dacc496f'
+} else {
+    # see https://www.elastic.co/downloads/kibana
+    $archiveUrl = 'https://artifacts.elastic.co/downloads/kibana/kibana-7.4.2-windows-x86_64.zip'
+    $archiveHash = 'a5ca936643d9c7586e266c90d9e5975b61f34799b4eb74f9ce458d341a14079ea7575c9834de12f79a9fc9958e51c3dff341c28dea98fe3fc17c54dfe8b01de4'
+}
 $archiveName = Split-Path $archiveUrl -Leaf
 $archivePath = "$env:TEMP\$archiveName"
 
-Write-Host 'Downloading logstash...'
+Write-Host 'Downloading Kibana...'
 (New-Object Net.WebClient).DownloadFile($archiveUrl, $archivePath)
 $archiveActualHash = (Get-FileHash $archivePath -Algorithm SHA512).Hash
 if ($archiveHash -ne $archiveActualHash) {
     throw "$archiveName downloaded from $archiveUrl to $archivePath has $archiveActualHash hash witch does not match the expected $archiveHash"
 }
 
-Write-Host 'Installing logstash...'
+Write-Host 'Installing Kibana...'
 Get-ChocolateyUnzip -FileFullPath $archivePath -Destination $serviceHome
-$archiveTempPath = Resolve-Path $serviceHome\logstash-*
+$archiveTempPath = Resolve-Path $serviceHome\kibana-*
 Move-Item $archiveTempPath\* $serviceHome
 Remove-Item $archiveTempPath
 Remove-Item $archivePath
 
 Write-Output "Installing the $serviceName service..."
-nssm install $serviceName $serviceHome\bin\logstash.bat
+nssm install $serviceName $serviceHome\bin\kibana.bat
 nssm set $serviceName Start SERVICE_AUTO_START
 nssm set $serviceName AppDirectory $serviceHome
-nssm set $servicename AppParameters -f config/logstash.conf
 nssm set $serviceName AppRotateFiles 1
 nssm set $serviceName AppRotateOnline 1
 nssm set $serviceName AppRotateSeconds 86400
@@ -49,7 +59,7 @@ if ($result -ne '[SC] ChangeServiceConfig2 SUCCESS') {
 }
 
 Write-Output "Granting write permissions to selected directories...."
-@('data', 'logs') | ForEach-Object {
+@('optimize', 'data', 'logs') | ForEach-Object {
     $path = "$serviceHome\$_"
     mkdir -Force $path | Out-Null
     Disable-AclInheritance $path
@@ -61,36 +71,18 @@ Write-Output "Granting write permissions to selected directories...."
             -Path $path
     }
 }
-Copy-Item c:\vagrant\logstash.conf $serviceHome\config
 
 Write-Output "Starting the $serviceName service..."
 Start-Service $serviceName
 
-# enable the _size property to account the size of each document _source property length.
-# see https://www.elastic.co/guide/en/elasticsearch/plugins/current/mapper-size.html
-function Enable-ElasticsearchTemplateSizeMapping($templateName) {
-    $templateUrl = "http://localhost:9200/_template/$templateName"
-    # wait for the template to appear (the application might still be creating it in the background).
-    while ($true) {
-        try {
-            $template = (Invoke-RestMethod -Uri $templateUrl).$templateName
-            break
-        }
-        catch {
-            Start-Sleep -Seconds 3
-        }
-    }
-    $template.mappings | Add-Member -NotePropertyName _size -NotePropertyValue @{enabled=$true}
-    $templateJson = $template | ConvertTo-Json -Depth 100
-    $result = Invoke-RestMethod `
-        -Method Put `
-        -Uri $templateUrl `
-        -ContentType 'application/json' `
-        -Body $templateJson
-    if (!$result.acknowledged) {
-        throw "failed to set the elasticsearch template size mapping: $($result | ConvertTo-Json -Compress)"
-    }
-}
-$templateName = 'logstash'
-Write-Output "Enabling the _size field in the $templateName template..."
-Enable-ElasticsearchTemplateSizeMapping $templateName
+# add default desktop shortcuts (called from a provision-base.ps1 generated script).
+[IO.File]::WriteAllText(
+    "$env:USERPROFILE\ConfigureDesktop-Kibana.ps1",
+@'
+[IO.File]::WriteAllText(
+    "$env:USERPROFILE\Desktop\Kibana.url",
+    @"
+[InternetShortcut]
+URL=http://localhost:5601
+"@)
+'@)

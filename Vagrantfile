@@ -1,3 +1,5 @@
+elastic_flavor = 'oss' # oss or basic.
+
 hosts = '''
 10.10.10.100 elasticsearch.example.com
 10.10.10.100 kibana.example.com
@@ -5,7 +7,7 @@ hosts = '''
 
 Vagrant.configure('2') do |config|
   config.vm.provider "libvirt" do |lv, config|
-    lv.memory = 4*1024
+    lv.memory = 6*1024
     lv.cpus = 2
     lv.cpu_mode = "host-passthrough"
     lv.keymap = "pt"
@@ -17,7 +19,7 @@ Vagrant.configure('2') do |config|
   config.vm.provider :virtualbox do |v, override|
     v.linked_clone = true
     v.cpus = 2
-    v.memory = 4*1024
+    v.memory = 6*1024
     v.customize ['modifyvm', :id, '--vram', 64]
     v.customize ['modifyvm', :id, '--clipboard', 'bidirectional']
   end
@@ -29,10 +31,10 @@ Vagrant.configure('2') do |config|
     config.vm.provision :shell, inline: "'#{hosts}' | Out-File -Encoding Ascii -Append c:/Windows/System32/drivers/etc/hosts"
     config.vm.provision :shell, path: 'ps.ps1', args: 'provision-common.ps1'
     config.vm.provision :shell, path: 'ps.ps1', args: 'provision-wireshark.ps1'
-    config.vm.provision :shell, path: 'ps.ps1', args: 'provision-elasticsearch-oss.ps1'
-    config.vm.provision :shell, path: 'ps.ps1', args: 'provision-kibana-oss.ps1'
-    config.vm.provision :shell, path: 'ps.ps1', args: 'provision-logstash-oss.ps1'
-    config.vm.provision :shell, path: 'ps.ps1', args: 'provision-winlogbeat-oss.ps1'
+    config.vm.provision :shell, path: 'ps.ps1', args: ['provision-elasticsearch.ps1', elastic_flavor]
+    config.vm.provision :shell, path: 'ps.ps1', args: ['provision-kibana.ps1', elastic_flavor]
+    config.vm.provision :shell, path: 'ps.ps1', args: ['provision-logstash.ps1', elastic_flavor]
+    config.vm.provision :shell, path: 'ps.ps1', args: ['provision-winlogbeat.ps1', elastic_flavor]
     config.vm.provision :shell, path: 'ps.ps1', args: 'provision-grafana.ps1'
     config.vm.provision :shell, path: 'ps.ps1', args: 'provision-dotnetcore-sdk.ps1'
     config.vm.provision :shell, path: 'ps.ps1', args: 'examples/powershell-logstash-udp/run.ps1'

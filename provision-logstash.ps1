@@ -1,31 +1,66 @@
+param(
+    [ValidateSet('oss', 'basic')]
+    [string]$elasticFlavor = 'oss'
+)
+
 Import-Module Carbon
 Import-Module "$env:ChocolateyInstall\helpers\chocolateyInstaller.psm1"
 
-$serviceHome = 'C:\winlogbeat'
-$serviceName = 'winlogbeat'
-$serviceUsername = "SYSTEM"
-# see https://www.elastic.co/downloads/beats/winlogbeat-oss
-$archiveUrl = 'https://artifacts.elastic.co/downloads/beats/winlogbeat/winlogbeat-oss-7.4.2-windows-x86_64.zip'
-$archiveHash = '4e10fa1dc572df0070dfb9dfcc955248fb55ae111043f204f65c9891ac9a2f54aed05757b46a1b3e4bc7263172afa0c7a85cd54a74bfc7b7e5febea8c1df938a'
+$serviceHome = 'C:\logstash'
+$serviceName = 'logstash'
+$serviceUsername = "NT SERVICE\$serviceName"
+if ($elasticFlavor -eq 'oss') {
+    # see https://www.elastic.co/downloads/logstash-oss
+    $archiveUrl = 'https://artifacts.elastic.co/downloads/logstash/logstash-oss-7.4.2.zip'
+    $archiveHash = '71abe986dd88846aa715a8c0bcd1729f6cab8fbcdd5b43dab762a334b2ec6c11049131a7a96e571d3be88ef1aa3586874386d0d8319496ba5354b425ac96c415'
+} else {
+    # see https://www.elastic.co/downloads/logstash
+    $archiveUrl = 'https://artifacts.elastic.co/downloads/logstash/logstash-7.4.2.zip'
+    $archiveHash = 'a63518091d69d2bdc7ba155847438f03207cef7504718cd1313c8c0ae031c0b6fe7e9d94bca6d09f43c534a53a012381266dcfb70d164927fe191a672151f43c'
+}
 $archiveName = Split-Path $archiveUrl -Leaf
 $archivePath = "$env:TEMP\$archiveName"
 
-Write-Host 'Downloading winlogbeat...'
+Write-Host 'Downloading logstash...'
 (New-Object Net.WebClient).DownloadFile($archiveUrl, $archivePath)
 $archiveActualHash = (Get-FileHash $archivePath -Algorithm SHA512).Hash
 if ($archiveHash -ne $archiveActualHash) {
     throw "$archiveName downloaded from $archiveUrl to $archivePath has $archiveActualHash hash witch does not match the expected $archiveHash"
 }
 
-Write-Host 'Installing winlogbeat...'
+Write-Host 'Installing logstash...'
 Get-ChocolateyUnzip -FileFullPath $archivePath -Destination $serviceHome
-$archiveTempPath = Resolve-Path $serviceHome\winlogbeat-*
+$archiveTempPath = Resolve-Path $serviceHome\logstash-*
 Move-Item $archiveTempPath\* $serviceHome
 Remove-Item $archiveTempPath
 Remove-Item $archivePath
 
+Write-Output "Installing the $serviceName service..."
+nssm install $serviceName $serviceHome\bin\logstash.bat
+nssm set $serviceName Start SERVICE_AUTO_START
+nssm set $serviceName AppDirectory $serviceHome
+nssm set $servicename AppParameters -f config/logstash.conf
+nssm set $serviceName AppRotateFiles 1
+nssm set $serviceName AppRotateOnline 1
+nssm set $serviceName AppRotateSeconds 86400
+nssm set $serviceName AppRotateBytes (10*1024*1024) # 10MB
+nssm set $serviceName AppStdout $serviceHome\logs\$serviceName-stdout.log
+nssm set $serviceName AppStderr $serviceHome\logs\$serviceName-stderr.log
+[string[]]$result = sc.exe sidtype $serviceName unrestricted
+if ($result -ne '[SC] ChangeServiceConfig2 SUCCESS') {
+    throw "sc.exe sidtype failed with $result"
+}
+[string[]]$result = sc.exe config $serviceName obj= $serviceUsername
+if ($result -ne '[SC] ChangeServiceConfig SUCCESS') {
+    throw "sc.exe config failed with $result"
+}
+[string[]]$result = sc.exe failure $serviceName reset= 0 actions= restart/60000
+if ($result -ne '[SC] ChangeServiceConfig2 SUCCESS') {
+    throw "sc.exe failure failed with $result"
+}
+
 Write-Output "Granting write permissions to selected directories...."
-@('.') | ForEach-Object {
+@('data', 'logs') | ForEach-Object {
     $path = "$serviceHome\$_"
     mkdir -Force $path | Out-Null
     Disable-AclInheritance $path
@@ -37,41 +72,7 @@ Write-Output "Granting write permissions to selected directories...."
             -Path $path
     }
 }
-@('config', 'logs', 'data') | ForEach-Object {
-    mkdir -Force "$serviceHome\$_" | Out-Null
-}
-Remove-Item "$serviceHome\winlogbeat.yml"
-Move-Item "$serviceHome\winlogbeat.reference.yml" "$serviceHome\config"
-Copy-Item c:\vagrant\winlogbeat.yml "$serviceHome\config"
-
-Write-Output "Validating the configuration..."
-[string[]]$result = &"$serviceHome\winlogbeat.exe" test config -c "$serviceHome\config\winlogbeat.yml"
-if ($result -ne 'Config OK') {
-    throw "winlogbeat $serviceHome\config\winlogbeat.yml has errors: $result"
-}
-
-# see https://www.elastic.co/guide/en/beats/winlogbeat/current/winlogbeat-template.html#load-template-manually
-Write-Output "Creating the winlogbeat Elasticsearch template..."
-&"$serviceHome\winlogbeat.exe" `
-    setup `
-    --index-management `
-    -c "$serviceHome\config\winlogbeat.yml" `
-    -E output.logstash.enabled=false `
-    -E 'output.elasticsearch.hosts=["localhost:9200"]'
-
-Write-Output "Installing the $serviceName service..."
-[string[]]$result = sc.exe `
-    create `
-    $serviceName `
-    start= delayed-auto `
-    binPath= "$serviceHome\winlogbeat.exe -c $serviceHome\config\winlogbeat.yml"
-if ($result -ne '[SC] CreateService SUCCESS') {
-    throw "sc.exe create failed with $result"
-}
-[string[]]$result = sc.exe failure $serviceName reset= 0 actions= restart/60000
-if ($result -ne '[SC] ChangeServiceConfig2 SUCCESS') {
-    throw "sc.exe failure failed with $result"
-}
+Copy-Item c:\vagrant\logstash.conf $serviceHome\config
 
 Write-Output "Starting the $serviceName service..."
 Start-Service $serviceName
@@ -101,6 +102,6 @@ function Enable-ElasticsearchTemplateSizeMapping($templateName) {
         throw "failed to set the elasticsearch template size mapping: $($result | ConvertTo-Json -Compress)"
     }
 }
-$templateName = "winlogbeat-$($archiveName -replace '.+-(\d+(\.\d+)+).+','$1')"
+$templateName = 'logstash'
 Write-Output "Enabling the _size field in the $templateName template..."
 Enable-ElasticsearchTemplateSizeMapping $templateName
