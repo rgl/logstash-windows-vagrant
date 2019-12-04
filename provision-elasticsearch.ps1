@@ -90,6 +90,36 @@ Disable-AclInheritance $elasticsearchHome\config\elasticsearch.keystore
 Grant-Permission $elasticsearchHome\config\elasticsearch.keystore Administrators FullControl
 Grant-Permission $elasticsearchHome\config\elasticsearch.keystore $elasticsearchServiceUsername FullControl
 
+# enable monitoring.
+if ($elasticFlavor -ne 'oss') {
+    Write-Host 'Enabling xpack monitoring...'
+    Add-Content -Encoding ascii $elasticsearchHome\config\elasticsearch.yml @'
+
+# -------------------------------- Monitoring ----------------------------------
+#
+# NB this will automatically maintain a system index alike .monitoring-es-7-2019.12.04.
+#
+# see https://www.elastic.co/guide/en/elasticsearch/reference/7.5/monitor-elasticsearch-cluster.html
+# see https://www.elastic.co/guide/en/elasticsearch/reference/7.5/monitoring-settings.html
+# see https://www.elastic.co/guide/en/kibana/7.5/monitoring-data.html
+
+xpack.monitoring.enabled: true
+xpack.monitoring.collection.enabled: true
+'@
+
+    # add default desktop shortcuts (called from a provision-base.ps1 generated script).
+    [IO.File]::WriteAllText(
+        "$env:USERPROFILE\ConfigureDesktop-Elastic-Stack-Monitoring.ps1",
+@'
+[IO.File]::WriteAllText(
+    "$env:USERPROFILE\Desktop\Elastic Stack Monitoring.url",
+    @"
+[InternetShortcut]
+URL=http://localhost:5601/app/monitoring
+"@)
+'@)
+}
+
 # install plugins.
 Install-ElasticsearchPlugin 'ingest-attachment'
 Install-ElasticsearchPlugin 'mapper-size'

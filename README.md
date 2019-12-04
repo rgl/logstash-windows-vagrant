@@ -12,4 +12,4 @@ Launch the `logstash` machine:
 vagrant up logstash --provider=virtualbox # or --provider=libvirt
 ```
 
-Logon at the Windows console.
+Logon at the Windows Machine console and use the desktop icons to access the applications.
