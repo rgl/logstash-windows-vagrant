@@ -75,6 +75,87 @@ Write-Output "Granting write permissions to selected directories...."
 Write-Output "Starting the $serviceName service..."
 Start-Service $serviceName
 
+$apiBaseUrl = 'http://localhost:5601/api'
+
+function Invoke-KibanaApi($relativeUrl, $body, $method='Post') {
+    $url = "$apiBaseUrl/$relativeUrl"
+    if ($method -eq 'Get') {
+        if ($body) {
+            # transform the body into a query string.
+            $qs = @()
+            $body.GetEnumerator() | ForEach-Object {
+                $key = $_.Name
+                if ($_.Value -isnot [Array]) {
+                    $qs += "$([Uri]::EscapeDataString($key))=$([Uri]::EscapeDataString($_.Value))"
+                } else {
+                    $_.Value | ForEach-Object {
+                        $qs += "$([Uri]::EscapeDataString($key))=$([Uri]::EscapeDataString($_))"
+                    }
+                }
+            }
+            if ($qs) {
+                $url += "?$($qs -join '&')"
+            }
+        }
+        $body = $null
+    }
+    Invoke-RestMethod `
+        -Method $method `
+        -Uri $url `
+        -ContentType 'application/json' `
+        -Headers @{
+            'kbn-xsrf' = 'provision'
+        } `
+        -Body (ConvertTo-Json -Depth 100 -Compress $body)
+}
+
+function Wait-ForKibanaReady {
+    Wait-ForCondition {
+        $response = Invoke-RestMethod `
+            -Method Get `
+            -Uri $apiBaseUrl/features
+        $response.app[0] -eq 'kibana'
+    }
+}
+
+Write-Host 'Waiting for Kibana to be ready...'
+Wait-ForKibanaReady
+
+# create index patterns.
+@(
+    'logstash-*'
+    'winlogbeat-*'
+) | ForEach-Object {
+    $id = $_ -replace '(.+)-.*','$1'
+    $title = $_
+    Write-Host "Creating Kibana index-pattern $title..."
+    $response = Invoke-KibanaApi "saved_objects/index-pattern/$id" @{
+        attributes = @{
+            title = $title
+            timeFieldName = '@timestamp'
+        }
+    }
+    Write-Host "Refreshing Kibana index-pattern $title..."
+    # NB there is no documented way to refresh the index-pattern,
+    #    so we'll do it like the UI does and hope for the best.
+    # see https://github.com/elastic/kibana/issues/6498
+    $response = Invoke-KibanaApi -method 'Get' 'index_patterns/_fields_for_wildcard' @{
+        pattern = $title
+        meta_fields = @('_source', '_id', '_type', '_index', '_score')
+    }
+    $response = Invoke-KibanaApi -method 'Put' "saved_objects/index-pattern/$id" @{
+        attributes = @{
+            title = $title
+            timeFieldName = '@timestamp'
+            fields = (ConvertTo-Json -Depth 100 -Compress $response.fields)
+        }
+    }
+}
+# list index patterns.
+(Invoke-KibanaApi -method 'Get' 'saved_objects/_find?type=index-pattern&fields=id&fields=title&per_page=10000').saved_objects | ForEach-Object {
+    Write-Host "Kibana Index Pattern $($_.id) $($_.attributes.title)"
+}
+
 # add default desktop shortcuts (called from a provision-base.ps1 generated script).
 [IO.File]::WriteAllText(
     "$env:USERPROFILE\ConfigureDesktop-Kibana.ps1",
