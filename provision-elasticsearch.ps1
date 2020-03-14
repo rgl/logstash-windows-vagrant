@@ -6,7 +6,7 @@ param(
 Import-Module Carbon
 Import-Module "$env:ChocolateyInstall\helpers\chocolateyInstaller.psm1"
 
-choco install -y adoptopenjdk8jre
+choco install -y adoptopenjdk11jre
 Update-SessionEnvironment
 
 $elasticsearchHome = 'C:\elasticsearch'

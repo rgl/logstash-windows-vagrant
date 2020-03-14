@@ -1,9 +1,10 @@
-// see https://docs.gradle.org/5.2/userguide/java_plugin.html
-// see https://docs.gradle.org/5.2/userguide/application_plugin.html
+// see https://docs.gradle.org/6.2.2/userguide/java_plugin.html
+// see https://docs.gradle.org/6.2.2/userguide/application_plugin.html
+// see https://docs.gradle.org/6.2.2/userguide/building_java_projects.html#sec:java_dependency_management_overview
 // see http://imperceptiblethoughts.com/shadow/
 
 plugins {
-    id 'com.github.johnrengelman.shadow' version '4.0.4'
+    id 'com.github.johnrengelman.shadow' version '5.2.0'
 }
 
 apply plugin: 'application'
@@ -13,16 +14,6 @@ version = '1.0.0'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-jar {
-    manifest {
-        attributes(
-            'Implementation-Title': 'Logstash log4j2 http example',
-            'Implementation-Version': version,
-            'Main-Class': mainClassName
-        )
-    }
-}
-
 repositories {
     jcenter()
 }
@@ -30,7 +21,7 @@ repositories {
 dependencies {
     // see https://logging.apache.org/log4j/2.x/maven-artifacts.html#Using_Log4j_in_your_Gradle_build
     // see https://logging.apache.org/log4j/2.x/runtime-dependencies.html
-    compile 'org.apache.logging.log4j:log4j-api:2.11.2'
-    compile 'org.apache.logging.log4j:log4j-core:2.11.2'
-    compile 'com.fasterxml.jackson.core:jackson-databind:2.9.8'
+    implementation 'org.apache.logging.log4j:log4j-api:2.13.1'
+    implementation 'org.apache.logging.log4j:log4j-core:2.13.1'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.10.3'
 }
