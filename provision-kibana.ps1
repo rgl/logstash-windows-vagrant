@@ -11,12 +11,12 @@ $serviceName = 'kibana'
 $serviceUsername = "NT SERVICE\$serviceName"
 if ($elasticFlavor -eq 'oss') {
     # see https://www.elastic.co/downloads/kibana-oss
-    $archiveUrl = 'https://artifacts.elastic.co/downloads/kibana/kibana-oss-7.5.0-windows-x86_64.zip'
-    $archiveHash = '02986b5a2ada813f8fbbdb2f45e13e512957b667e753db70bdd52887a8f173a7d0953b44f6b0472a4da67d86ecec649663a81e33b53c4ffad0a6db3bec3b261d'
+    $archiveUrl = 'https://artifacts.elastic.co/downloads/kibana/kibana-oss-7.6.1-windows-x86_64.zip'
+    $archiveHash = 'da1f4513aee732d8ada14b6e5dbfa28fd9afbddf6ab55725dee28fa80d08e22387044a5aed2c23a028ee72d8a32e2c97493f78595bbd7fa4f3f7ef10c5cbd4d4'
 } else {
     # see https://www.elastic.co/downloads/kibana
-    $archiveUrl = 'https://artifacts.elastic.co/downloads/kibana/kibana-7.5.0-windows-x86_64.zip'
-    $archiveHash = '77b901c6b3a3e29a5c3f5c8da5d995393f737c2f84e197778f4b86c995d22564327ae2e0ca142f9b874b90d6a519fe273af04e01626ae42549c8105bdef5eea2'
+    $archiveUrl = 'https://artifacts.elastic.co/downloads/kibana/kibana-7.6.1-windows-x86_64.zip'
+    $archiveHash = '94ca790a6e4992a58d22c1a45945fe0c3cfd31fbe93760fe3bb6bc26fec5b7c99d34660c1deb9861797d0b8e5f3d65607305b2d6f493f29d851b383add07ff99'
 }
 $archiveName = Split-Path $archiveUrl -Leaf
 $archivePath = "$env:TEMP\$archiveName"
@@ -104,17 +104,17 @@ function Invoke-KibanaApi($relativeUrl, $body, $method='Post') {
         -Uri $url `
         -ContentType 'application/json' `
         -Headers @{
-            'kbn-xsrf' = 'provision'
+            'kbn-xsrf' = 'true'
         } `
         -Body (ConvertTo-Json -Depth 100 -Compress $body)
 }
 
 function Wait-ForKibanaReady {
     Wait-ForCondition {
-        $response = Invoke-RestMethod `
-            -Method Get `
-            -Uri $apiBaseUrl/features
-        $response.app[0] -eq 'kibana'
+        $response = Invoke-KibanaApi `
+            core/capabilities `
+            @{applications=@("kibana:discover")}
+        $response.discover.show -eq $true
     }
 }
 

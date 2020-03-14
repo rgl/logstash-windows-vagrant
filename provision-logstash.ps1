@@ -11,12 +11,12 @@ $serviceName = 'logstash'
 $serviceUsername = "NT SERVICE\$serviceName"
 if ($elasticFlavor -eq 'oss') {
     # see https://www.elastic.co/downloads/logstash-oss
-    $archiveUrl = 'https://artifacts.elastic.co/downloads/logstash/logstash-oss-7.5.0.zip'
-    $archiveHash = 'e3770aaaa37c1972221e9db0eaffeb3329460c4b13adae97dcbb9e1b1bb82b21ec57ddc2e1eb47dceec990e7d44417b80c6bad7c388f5fd47c79e8411ffcdf81'
+    $archiveUrl = 'https://artifacts.elastic.co/downloads/logstash/logstash-oss-7.6.1.zip'
+    $archiveHash = '79468eeeb3b1b42f43475745a91db603442181461dc402f5c13914eff3ceae33bbb811bbf7a0114ed6a06252414eee05a9311bd1c8766dec649e642e1e324aef'
 } else {
     # see https://www.elastic.co/downloads/logstash
-    $archiveUrl = 'https://artifacts.elastic.co/downloads/logstash/logstash-7.5.0.zip'
-    $archiveHash = '46a78dbd819c86486aa8466b5ec38bd15a3e8697712b778e9340fabf0ae54efa3cd36a44723e8d363cbe1211bef0e1b45c3d64aa0eedde7c74148682b841d604'
+    $archiveUrl = 'https://artifacts.elastic.co/downloads/logstash/logstash-7.6.1.zip'
+    $archiveHash = '8dcd6aa5a8049e43f155bc113dd95bd6fbcbf6184a5fa2de0540df96e6385b69791de5ca36b62a57126b925afbe7de2f86cbd6d7a8f0130c6aa8b38859b08447'
 }
 $archiveName = Split-Path $archiveUrl -Leaf
 $archivePath = "$env:TEMP\$archiveName"
