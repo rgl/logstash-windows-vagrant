@@ -44,6 +44,7 @@ Vagrant.configure('2') do |config|
     config.vm.provision :shell, path: 'ps.ps1', args: 'examples/powershell-logstash-udp/run.ps1'
     config.vm.provision :shell, path: 'ps.ps1', args: 'examples/csharp-serilog-http/run.ps1'
     config.vm.provision :shell, path: 'ps.ps1', args: 'provision-gradle.ps1'
+    config.vm.provision :shell, path: 'ps.ps1', args: 'examples/java-log4j2-http/run.ps1'
     config.vm.provision :shell, path: 'ps.ps1', args: 'examples/java-log4j-gelf/run.ps1'
     config.vm.provision :shell, path: 'ps.ps1', args: 'examples/java-log4j-syslog/run.ps1'
     config.vm.provision :shell, path: 'ps.ps1', args: 'provision-erlang.ps1'
