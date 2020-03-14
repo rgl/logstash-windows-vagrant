@@ -3,8 +3,8 @@ choco install -y wireshark
 # leave npcap on the desktop for the user to install manually.
 # (it does not have a silent installer).
 # see https://github.com/nmap/npcap/releases
-$url = 'https://nmap.org/npcap/dist/npcap-0.9984.exe'
-$expectedHash = '1fbd6fae7f561f847854ab74ab5229fbf1d11db93f8b79d72f117e90f7d3fe7f'
+$url = 'https://nmap.org/npcap/dist/npcap-0.9988.exe'
+$expectedHash = '826b531c9bccf49258beaa2bb601ca24cc24eec66824853d3c79ec9e4d563933'
 $localPath = "$env:USERPROFILE\Desktop\$(Split-Path -Leaf $url)"
 (New-Object Net.WebClient).DownloadFile($url, $localPath)
 $actualHash = (Get-FileHash $localPath -Algorithm SHA256).Hash
