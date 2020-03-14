@@ -23,7 +23,7 @@ Set-Content `
 '@
 
 Write-Host "Installing $serviceName..."
-choco install -y rabbitmq --version 3.8.0
+choco install -y rabbitmq --version 3.8.2
 
 # install a tool to test amqp connections.
 $archiveUrl = 'https://github.com/rgl/test-amqp/releases/download/v0.0.1/test-amqp.zip'
