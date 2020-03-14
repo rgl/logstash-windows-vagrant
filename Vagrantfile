@@ -32,9 +32,13 @@ Vagrant.configure('2') do |config|
     config.vm.provision :shell, path: 'ps.ps1', args: 'provision-common.ps1'
     config.vm.provision :shell, path: 'ps.ps1', args: 'provision-wireshark.ps1'
     config.vm.provision :shell, path: 'ps.ps1', args: ['provision-elasticsearch.ps1', elastic_flavor]
-    config.vm.provision :shell, path: 'ps.ps1', args: ['provision-kibana.ps1', elastic_flavor]
     config.vm.provision :shell, path: 'ps.ps1', args: ['provision-logstash.ps1', elastic_flavor]
     config.vm.provision :shell, path: 'ps.ps1', args: ['provision-winlogbeat.ps1', elastic_flavor]
+    # NB the kibana index pattern creation needs the index created (before calling
+    #    the kibana api endpoint index_patterns/_fields_for_wildcard). this
+    #    will indirectly create the logstash index before installing kibana.
+    config.vm.provision :shell, path: 'ps.ps1', args: 'examples/powershell-generate-logs/run.ps1'
+    config.vm.provision :shell, path: 'ps.ps1', args: ['provision-kibana.ps1', elastic_flavor]
     config.vm.provision :shell, path: 'ps.ps1', args: 'provision-grafana.ps1'
     config.vm.provision :shell, path: 'ps.ps1', args: 'provision-dotnetcore-sdk.ps1'
     config.vm.provision :shell, path: 'ps.ps1', args: 'examples/powershell-logstash-udp/run.ps1'
